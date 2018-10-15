@@ -1,4 +1,4 @@
-INCLUDE "hardware.inc"
+INCLUDE "../include/hardware.inc"
 
 SECTION "Header", ROM0[$100]
 

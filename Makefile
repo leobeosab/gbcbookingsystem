@@ -1,35 +1,30 @@
-# Simple makefile for assembling and linking a GB program.
 rwildcard		=	$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-ASM				:=	rgbasm
-LINKER			:=	rgblink
-FIX				:=	rgbfix
-BUILD_DIR		:=	build
-PROJECT_NAME	?=	flappyboy
-OUTPUT			:=	$(BUILD_DIR)/$(PROJECT_NAME)
-SRC_DIR			:=	src
-INC_DIR			:=	include/
-SRC_Z80			:=	$(call rwildcard, $(SRC_DIR)/, *.asm)
-OBJ_FILES		:=	$(addprefix $(BUILD_DIR)/obj/, $(SRC_Z80:src/%.asm=%.o))
-OBJ_DIRS 		:=	$(sort $(addprefix $(BUILD_DIR)/obj/, $(dir $(SRC_Z80:src/%.asm=%.o))))
-ASM_FLAGS		:=	-i $(INC_DIR)
 
-.PHONY: all clean
+ASM = rgbasm
+LINK = rgblink
+FIX = rgbfix
 
-all: fix
-	
-fix: build
-	$(FIX) -p0 -v $(OUTPUT).gb
+INCDIR = include
+BUILDDIR = build
+SYMDIR = $(BUILDDIR)\sym
+OBJDIR = $(BUILDDIR)\obj
 
-build: $(OBJ_FILES)
-	$(LINKER) -m $(OUTPUT).map -n $(OUTPUT).sym -o $(OUTPUT).gb $(OBJ_FILES)
-	
-$(BUILD_DIR)/obj/%.o : src/%.asm | $(OBJ_DIRS)
-	$(ASM) $(ASM_FLAGS) -o $@ $<
+#Change the following lines
+ROM_NAME = bookingsystem
+ASM_SOURCES := $(call rwildcard, src/, *.asm)
+OBJ_FILES := $(addprefix $(OBJDIR)/, $(ASM_SOURCES:src/%.asm=%.o))
+FIX_FLAGS := -v -p 0
 
-$(OBJ_DIRS): 
-	mkdir -p $@
+all: $(ROM_NAME)
+
+$(ROM_NAME): $(OBJ_FILES)
+	$(LINK) -o $(BUILDDIR)\$@.gb -n $(SYMDIR)\$@.sym $(OBJ_FILES)
+	$(FIX) $(FIX_FLAGS) $(BUILDDIR)\$@.gb
+
+$(OBJDIR)/%.o : src/%.asm
+	$(ASM) -i $(INCDIR)/ -o $@ $<
 
 clean:
-	rm -rf $(BUILD_DIR)
+	del $(BUILDDIR)\$(ROM_NAME).gb $(SYMDIR)\$(ROM_NAME).sym $(OBJECTS)
 
 print-%  : ; @echo $* = $($*)

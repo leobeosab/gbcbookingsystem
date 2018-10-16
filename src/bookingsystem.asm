@@ -1,9 +1,10 @@
-INCLUDE "../include/hardware.inc"
+INCLUDE "gb/hardware.inc"
 
 SECTION "Header", ROM0[$100]
 
 EntryPoint:
-    di jp Start
+    di 
+    jp Start
 
     REPT $150 - $104
         db 0
@@ -12,4 +13,5 @@ EntryPoint:
 SECTION "Booking system code", ROM0
 
 Start:
+    nop
 

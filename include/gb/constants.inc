@@ -1,3 +1,4 @@
+SOUND_CONTROL           EQU    $FF26
 LCD_CTRL                EQU    $FF40
 LCD_STAT                EQU    $FF41
 LCD_SCROLL_Y            EQU    $FF42
